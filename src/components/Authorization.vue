@@ -39,29 +39,29 @@ export default {
       incorrect: false
     }
   },
+  
   methods: {
-    onSubmit(formName){
-      this.$refs[formName].validate((valid) => {
+    onSubmit(form){
+      this.$refs[form].validate(async (valid) => {
           if (valid) {
-            this.$http.post("https://reb-sandbox.sdk.finance/api/v1/authorization", {   
-              login : this.form.userLogin,
-              password : this.form.userPassword
-            }).then(({ body, ok, status }) => {
-              if (status === 200 && ok === true){  
-                console.log(body);    //================================================================DELETE
-                this.$cookie.set("token", body.authorizationToken.token, body.authorizationToken.expiresAt);
-                this.$router.replace("/list");
-              } 
-            }).catch((err) => {
+            try {
+              let resp = await this.$http.post("https://reb-sandbox.sdk.finance/api/v1/authorization", {   
+                login : this.form.userLogin,
+                password : this.form.userPassword
+              });
+              this.$cookie.set("token", resp.body.authorizationToken.token, resp.body.authorizationToken.expiresAt);
+              this.$router.replace("/list");
+            } catch (err) {
               console.log(err);
               this.incorrect = true;
-            })
+            }
           } else {
             return false;
           }
       });
     },
   }
+
 }
 </script>
 

@@ -6,6 +6,7 @@ import locale from 'element-ui/lib/locale';
 import VueResource from 'vue-resource';
 import VueCookie from 'vue-cookie';
 import VueRouter from 'vue-router';
+import BabelPolyfill from 'babel-polyfill';
 
 import routes from './routes';
 

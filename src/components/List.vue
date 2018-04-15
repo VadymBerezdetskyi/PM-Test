@@ -64,40 +64,41 @@ export default {
       this.$router.replace('/');
       this.$cookie.delete('token');
     },
-    changePage(a){
-      console.log(a);
-      this.$http.post("https://reb-sandbox.sdk.finance/api/v1/users/view", {
-      "pageNumber": a - 1,
-      "pageSize": 10
-      }, {
-      headers: {
-        Authorization: `TOKEN ${this.$cookie.get('token')}` 
+
+    async changePage(a){
+      try {
+        let resp = await this.$http.post("https://reb-sandbox.sdk.finance/api/v1/users/view", {
+          "pageNumber": a - 1,
+          "pageSize": 10
+        },{
+          headers: {
+            Authorization: `TOKEN ${this.$cookie.get('token')}` 
+          }
+        });
+        this.tableData = resp.body.records;
+      } catch (err) {
+        console.log(err);
+        this.notFound = true;
       }
-      }).then(({body, ok, status}) => {
-      if (status === 200 && ok === true) {
-        this.tableData = body.records;
-      }
-      }).catch((err) => {
-      this.notFound = true;
-      })
     }
+
   },
-  created(){   
-    this.$http.post("https://reb-sandbox.sdk.finance/api/v1/users/view", {
-      "pageNumber": 0,
-      "pageSize": 10
-    }, {
-      headers: {
-        Authorization: `TOKEN ${this.$cookie.get('token')}` 
-      }
-    }).then(({body, ok, status}) => {
-      if (status === 200 && ok === true) {
-        this.tableData = body.records;
-        this.totalRecords = body.totalRecords;
-      }
-    }).catch((err) => {
+  async created(){   
+    try {
+        let resp = await this.$http.post("https://reb-sandbox.sdk.finance/api/v1/users/view", {
+        "pageNumber": 0,
+        "pageSize": 10
+      }, {
+        headers: {
+          Authorization: `TOKEN ${this.$cookie.get('token')}` 
+        }
+      });
+      this.tableData = resp.body.records;
+      this.totalRecords = resp.body.totalRecords;
+    } catch (err) {
+      console.log(err);
       this.notFound = true;
-    })
+    }
   }
 }
 </script>
